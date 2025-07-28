@@ -4,27 +4,30 @@ import com.ornek2.demo.UserRequest;
 import com.ornek2.demo.UserRequestRepository;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
+import org.camunda.bpm.client.task.ExternalTaskHandler;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@ExternalTaskSubscription(topicName = "basvuruOnay")
-public class BasvuruOnayCam {
+@ExternalTaskSubscription(topicName = "adminOnay")
+public class BasvuruOnayCam implements ExternalTaskHandler {
 
     @Autowired
     private UserRequestRepository userRequestRepository;
 
+    @Override
     public void execute(ExternalTask task, ExternalTaskService service) {
         String email = task.getVariable("email");
 
-        System.out.println("✅ basvuruOnay alındı: " + email);
+        System.out.println("📥 basvuruKayit alındı: " + email);
+
 
         UserRequest user = userRequestRepository.findFirstByEmailOrderByIdDesc(email);
         if (user != null) {
-            user.setStatus("APPROVED");
+            user.setStatus("PENDING");
             userRequestRepository.save(user);
-            System.out.println("✔ Kullanıcı onaylandı.");
+            System.out.println("✅ Status güncellendi: " + user.getStatus());
         } else {
             System.out.println("❌ Email ile kullanıcı bulunamadı: " + email);
         }
@@ -32,3 +35,4 @@ public class BasvuruOnayCam {
         service.complete(task);
     }
 }
+

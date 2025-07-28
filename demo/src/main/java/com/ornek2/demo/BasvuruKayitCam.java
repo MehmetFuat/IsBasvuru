@@ -22,9 +22,10 @@ public class BasvuruKayitCam implements ExternalTaskHandler {
 
         System.out.println("📥 basvuruKayit alındı: " + email);
 
+
         UserRequest user = userRequestRepository.findFirstByEmailOrderByIdDesc(email);
         if (user != null) {
-            user.setStatus("IN_PROCESS");
+            user.setStatus("PENDING");
             userRequestRepository.save(user);
             System.out.println("✅ Status güncellendi: " + user.getStatus());
         } else {
@@ -34,3 +35,4 @@ public class BasvuruKayitCam implements ExternalTaskHandler {
         service.complete(task);
     }
 }
+

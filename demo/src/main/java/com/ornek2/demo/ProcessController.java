@@ -9,7 +9,6 @@ import java.util.Map;
 @RequestMapping("/api/process")
 public class ProcessController {
 
-    @Autowired
     private RuntimeService runtimeService;
 
     @PostMapping("/start")

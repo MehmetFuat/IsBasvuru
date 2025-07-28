@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
 import java.util.Map;
 import java.util.HashMap;
 import org.camunda.bpm.engine.RuntimeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -33,6 +34,9 @@ public class UserController {
 
     @Autowired
     private RuntimeService runtimeService;
+
+    @Autowired
+    private backofficeRepository backofficeTaskRepository;
     
 
 
@@ -71,7 +75,7 @@ public class UserController {
 
             userRequestRepository.save(userRequest);
 
-            // Camunda Süreci Başlat
+
             Map<String, Object> variables = new HashMap<>();
             variables.put("name", userRequest.getName());
             variables.put("surname", userRequest.getSurname());
@@ -81,9 +85,20 @@ public class UserController {
             variables.put("note", userRequest.getNote());
             variables.put("cvFileName", fileName);
 
-            CamundaStartProcessRequest request = new CamundaStartProcessRequest();
-            request.setVariables(variables);
-            CamundaStartProcessResponse  = camundaClient.startProcessWithVariables("BasvuruSureci", request);
+            ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("BasvuruSureci", variables);
+
+            backofficeTask task = new backofficeTask();
+            task.setTaskId(UUID.randomUUID().toString());
+            task.setTaskType("Kayıt");
+            task.setName(userRequest.getName() + " " + userRequest.getSurname());
+            task.setEmail(userRequest.getEmail());
+            task.setStatus("PENDING");
+            task.setProcessInstanceId(processInstance.getProcessInstanceId());
+            task.setCreatedDate(LocalDateTime.now());
+            task.setDueDate(LocalDateTime.now().plusDays(3)); // Öylesine örnek
+            task.setWarningDate(LocalDateTime.now().plusDays(2)); // Öylesine örnek
+
+            backofficeTaskRepository.save(task);
 
             return "Başvuru alındı. Başvuru Kodunuz: " + userRequest.getApplicationCode();
         } catch (IOException e) {
@@ -114,6 +129,7 @@ public class UserController {
         if (user != null && user.getStatus().equals("PENDING")) {
             user.setStatus("APPROVED");
             userRequestRepository.save(user);
+
             return "User approved: " + email + (note != null ? " (Note: " + note + ")" : "");
         }
         return "User not found or already processed.";

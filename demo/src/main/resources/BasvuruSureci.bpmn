@@ -5,33 +5,28 @@
       <bpmn:outgoing>Flow_0f9o6yu</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_0f9o6yu" sourceRef="StartEvent_1" targetRef="Activity_1yc3f5n" />
-    <bpmn:userTask id="Activity_07jk0m6" name="Admin Onay">
-      <bpmn:incoming>Flow_158tlu3</bpmn:incoming>
-      <bpmn:outgoing>Flow_1q1woim</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:sequenceFlow id="Flow_1q1woim" sourceRef="Activity_07jk0m6" targetRef="Gateway_0ce1rb0" />
     <bpmn:exclusiveGateway id="Gateway_0ce1rb0" name="Sonuç" default="Flow_0hleaeg">
-      <bpmn:incoming>Flow_1q1woim</bpmn:incoming>
+      <bpmn:incoming>Flow_1dalx9l</bpmn:incoming>
       <bpmn:outgoing>Flow_0hleaeg</bpmn:outgoing>
       <bpmn:outgoing>Flow_1xsezxr</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_158tlu3" sourceRef="Activity_1yc3f5n" targetRef="Activity_07jk0m6" />
-    <bpmn:serviceTask id="Activity_1yc3f5n" name="Kayıt" camunda:type="external" camunda:topic="basvuruKayit">
+    <bpmn:sequenceFlow id="Flow_158tlu3" sourceRef="Activity_1yc3f5n" targetRef="Activity_1aklq96" />
+    <bpmn:serviceTask id="Activity_1yc3f5n" name="Kayıt" camunda:asyncBefore="true" camunda:type="external" camunda:topic="basvuruKayit">
       <bpmn:incoming>Flow_0f9o6yu</bpmn:incoming>
       <bpmn:incoming>Flow_1hsn6ro</bpmn:incoming>
       <bpmn:outgoing>Flow_158tlu3</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0hleaeg" name="red" sourceRef="Gateway_0ce1rb0" targetRef="Activity_03yp987" />
-    <bpmn:serviceTask id="Activity_03yp987" name="Red" camunda:type="external" camunda:topic="basvuruRed">
+    <bpmn:serviceTask id="Activity_03yp987" name="Red" camunda:asyncBefore="true" camunda:type="external" camunda:topic="basvuruRed">
       <bpmn:incoming>Flow_0hleaeg</bpmn:incoming>
       <bpmn:outgoing>Flow_0mkov0k</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0yrxt0s" name="Onay" camunda:type="external" camunda:topic="basvuruOnay">
+    <bpmn:serviceTask id="Activity_0yrxt0s" name="Onay" camunda:asyncBefore="true" camunda:type="external" camunda:topic="basvuruOnay">
       <bpmn:incoming>Flow_1xsezxr</bpmn:incoming>
       <bpmn:outgoing>Flow_1lpt3sa</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1xsezxr" name="onay" sourceRef="Gateway_0ce1rb0" targetRef="Activity_0yrxt0s">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${adminKarar == "APPROVED"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="Event_1m35q2q">
       <bpmn:incoming>Flow_1lpt3sa</bpmn:incoming>
@@ -45,10 +40,22 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0mkov0k" sourceRef="Activity_03yp987" targetRef="Gateway_01f31dv" />
     <bpmn:sequenceFlow id="Flow_1ymj4ws" name="Yok" sourceRef="Gateway_01f31dv" targetRef="Event_1m35q2q">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${hak == "YOK"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1hsn6ro" name="Var" sourceRef="Gateway_01f31dv" targetRef="Activity_1yc3f5n" />
+    <bpmn:sequenceFlow id="Flow_0jf0c2c" sourceRef="Activity_1aklq96" targetRef="Event_1lk8v0o" />
+    <bpmn:serviceTask id="Activity_1aklq96" name="Admin Onay" camunda:asyncBefore="true" camunda:type="external" camunda:topic="adminOnay">
+      <bpmn:incoming>Flow_158tlu3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jf0c2c</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:intermediateCatchEvent id="Event_1lk8v0o" name="Admin Onay Mesajı">
+      <bpmn:incoming>Flow_0jf0c2c</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dalx9l</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1h0aiqb" messageRef="Message_01qk16m" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1dalx9l" sourceRef="Event_1lk8v0o" targetRef="Gateway_0ce1rb0" />
   </bpmn:process>
+  <bpmn:message id="Message_01qk16m" name="admin_message" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="BasvuruSureci">
       <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
@@ -56,10 +63,6 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="160" y="355" width="41" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0k83w3w_di" bpmnElement="Activity_07jk0m6">
-        <dc:Bounds x="550" y="290" width="100" height="80" />
-        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0ce1rb0_di" bpmnElement="Gateway_0ce1rb0" isMarkerVisible="true">
         <dc:Bounds x="775" y="305" width="50" height="50" />
@@ -88,17 +91,23 @@
           <dc:Bounds x="1164.5" y="323" width="73" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0z8wfe5_di" bpmnElement="Activity_1aklq96">
+        <dc:Bounds x="510" y="290" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1f84jyv" bpmnElement="Event_1lk8v0o">
+        <dc:Bounds x="682" y="312" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="670" y="358" width="60" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0f9o6yu_di" bpmnElement="Flow_0f9o6yu">
         <di:waypoint x="198" y="330" />
         <di:waypoint x="320" y="330" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1q1woim_di" bpmnElement="Flow_1q1woim">
-        <di:waypoint x="650" y="330" />
-        <di:waypoint x="775" y="330" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_158tlu3_di" bpmnElement="Flow_158tlu3">
         <di:waypoint x="420" y="330" />
-        <di:waypoint x="550" y="330" />
+        <di:waypoint x="510" y="330" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0hleaeg_di" bpmnElement="Flow_0hleaeg">
         <di:waypoint x="825" y="330" />
@@ -111,7 +120,7 @@
         <di:waypoint x="800" y="305" />
         <di:waypoint x="800" y="160" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="803" y="230" width="25" height="14" />
+          <dc:Bounds x="804" y="230" width="25" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1lpt3sa_di" bpmnElement="Flow_1lpt3sa">
@@ -126,7 +135,7 @@
         <di:waypoint x="1130" y="305" />
         <di:waypoint x="1130" y="138" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1136" y="219" width="18" height="14" />
+          <dc:Bounds x="1136" y="219" width="19" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1hsn6ro_di" bpmnElement="Flow_1hsn6ro">
@@ -137,6 +146,14 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="742" y="502" width="17" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jf0c2c_di" bpmnElement="Flow_0jf0c2c">
+        <di:waypoint x="610" y="330" />
+        <di:waypoint x="682" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dalx9l_di" bpmnElement="Flow_1dalx9l">
+        <di:waypoint x="718" y="330" />
+        <di:waypoint x="775" y="330" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
