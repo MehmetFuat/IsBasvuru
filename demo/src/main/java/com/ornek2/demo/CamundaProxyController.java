@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000") // frontend izinli olsun
+
 public class CamundaProxyController {
 
     @PostMapping("/send-admin-message")
@@ -22,7 +22,7 @@ public class CamundaProxyController {
 
             RestTemplate restTemplate = new RestTemplate();
 
-            String camundaUrl = "http://localhost:9090/engine-rest/message";
+            String camundaUrl = "http://localhost:8082/engine-rest/message";
 
             Map<String, Object> message = new HashMap<>();
             message.put("messageName", "admin_message");

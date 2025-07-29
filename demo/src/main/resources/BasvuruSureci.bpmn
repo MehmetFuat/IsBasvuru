@@ -11,17 +11,17 @@
       <bpmn:outgoing>Flow_1xsezxr</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_158tlu3" sourceRef="Activity_1yc3f5n" targetRef="Activity_1aklq96" />
-    <bpmn:serviceTask id="Activity_1yc3f5n" name="Kayıt" camunda:asyncBefore="true" camunda:type="external" camunda:topic="basvuruKayit">
+    <bpmn:serviceTask id="Activity_1yc3f5n" name="Kayıt" camunda:type="external" camunda:topic="basvuruKayit">
       <bpmn:incoming>Flow_0f9o6yu</bpmn:incoming>
       <bpmn:incoming>Flow_1hsn6ro</bpmn:incoming>
       <bpmn:outgoing>Flow_158tlu3</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0hleaeg" name="red" sourceRef="Gateway_0ce1rb0" targetRef="Activity_03yp987" />
-    <bpmn:serviceTask id="Activity_03yp987" name="Red" camunda:asyncBefore="true" camunda:type="external" camunda:topic="basvuruRed">
+    <bpmn:serviceTask id="Activity_03yp987" name="Red" camunda:type="external" camunda:topic="basvuruRed">
       <bpmn:incoming>Flow_0hleaeg</bpmn:incoming>
       <bpmn:outgoing>Flow_0mkov0k</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0yrxt0s" name="Onay" camunda:asyncBefore="true" camunda:type="external" camunda:topic="basvuruOnay">
+    <bpmn:serviceTask id="Activity_0yrxt0s" name="Onay" camunda:type="external" camunda:topic="basvuruOnay">
       <bpmn:incoming>Flow_1xsezxr</bpmn:incoming>
       <bpmn:outgoing>Flow_1lpt3sa</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -44,7 +44,7 @@
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1hsn6ro" name="Var" sourceRef="Gateway_01f31dv" targetRef="Activity_1yc3f5n" />
     <bpmn:sequenceFlow id="Flow_0jf0c2c" sourceRef="Activity_1aklq96" targetRef="Event_1lk8v0o" />
-    <bpmn:serviceTask id="Activity_1aklq96" name="Admin Onay" camunda:asyncBefore="true" camunda:type="external" camunda:topic="adminOnay">
+    <bpmn:serviceTask id="Activity_1aklq96" name="Admin Onay" camunda:type="external" camunda:topic="adminOnay">
       <bpmn:incoming>Flow_158tlu3</bpmn:incoming>
       <bpmn:outgoing>Flow_0jf0c2c</bpmn:outgoing>
     </bpmn:serviceTask>

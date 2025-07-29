@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Component
 @ExternalTaskSubscription(topicName = "basvuruOnay")
-@CrossOrigin(origins = "http://localhost:3000")
+
 public class AdminOnayWorker implements ExternalTaskHandler {
 
     @Override
