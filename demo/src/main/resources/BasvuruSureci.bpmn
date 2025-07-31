@@ -13,7 +13,6 @@
     <bpmn:sequenceFlow id="Flow_158tlu3" sourceRef="Activity_1yc3f5n" targetRef="Activity_1aklq96" />
     <bpmn:serviceTask id="Activity_1yc3f5n" name="Kayıt" camunda:type="external" camunda:topic="basvuruKayit">
       <bpmn:incoming>Flow_0f9o6yu</bpmn:incoming>
-      <bpmn:incoming>Flow_1hsn6ro</bpmn:incoming>
       <bpmn:outgoing>Flow_158tlu3</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0hleaeg" name="red" sourceRef="Gateway_0ce1rb0" targetRef="Activity_03yp987" />
@@ -42,10 +41,11 @@
     <bpmn:sequenceFlow id="Flow_1ymj4ws" name="Yok" sourceRef="Gateway_01f31dv" targetRef="Event_1m35q2q">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${hak == "YOK"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1hsn6ro" name="Var" sourceRef="Gateway_01f31dv" targetRef="Activity_1yc3f5n" />
+    <bpmn:sequenceFlow id="Flow_1hsn6ro" name="Var" sourceRef="Gateway_01f31dv" targetRef="Activity_1aklq96" />
     <bpmn:sequenceFlow id="Flow_0jf0c2c" sourceRef="Activity_1aklq96" targetRef="Event_1lk8v0o" />
-    <bpmn:serviceTask id="Activity_1aklq96" name="Admin Onay" camunda:type="external" camunda:topic="adminOnay">
+    <bpmn:serviceTask id="Activity_1aklq96" name="BackOfficeTaskCreation" camunda:type="external" camunda:topic="backOfficeTaskCreation">
       <bpmn:incoming>Flow_158tlu3</bpmn:incoming>
+      <bpmn:incoming>Flow_1hsn6ro</bpmn:incoming>
       <bpmn:outgoing>Flow_0jf0c2c</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:intermediateCatchEvent id="Event_1lk8v0o" name="Admin Onay Mesajı">
@@ -141,10 +141,10 @@
       <bpmndi:BPMNEdge id="Flow_1hsn6ro_di" bpmnElement="Flow_1hsn6ro">
         <di:waypoint x="1130" y="355" />
         <di:waypoint x="1130" y="520" />
-        <di:waypoint x="370" y="520" />
-        <di:waypoint x="370" y="370" />
+        <di:waypoint x="560" y="520" />
+        <di:waypoint x="560" y="370" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="742" y="502" width="17" height="14" />
+          <dc:Bounds x="837" y="502" width="17" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0jf0c2c_di" bpmnElement="Flow_0jf0c2c">

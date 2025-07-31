@@ -1,9 +1,8 @@
-package com.ornek2.demo;
+package com.ornek2.demo.api.camunda;
 
+
+import org.camunda.bpm.engine.RuntimeService;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -11,11 +10,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+public class CamundaController implements CamundaApi
+{
+    private RuntimeService runtimeService;
 
-public class CamundaProxyController {
+    @Override
+    public String startProcess(String applicationId) {
+        runtimeService.startProcessInstanceByKey("BasvuruSureci",
+                Map.of("basvuruId", applicationId));
+        return "Süreç başlatıldı. Başvuru ID: " + applicationId;
+    }
 
-    @PostMapping("/send-admin-message")
-    public ResponseEntity<?> sendAdminMessage(@RequestBody Map<String, Object> request) {
+    @Override
+    public ResponseEntity<?> sendAdminMessage(Map<String, Object> request) {
         try {
             String processInstanceId = (String) request.get("processInstanceId");
             String karar = (String) request.get("karar");

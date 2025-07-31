@@ -1,4 +1,4 @@
-package com.ornek2.demo;
+package com.ornek2.demo.model;
 
 import jakarta.persistence.*;
 import lombok.*;

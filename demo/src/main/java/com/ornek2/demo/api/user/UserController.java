@@ -1,14 +1,16 @@
-package com.ornek2.demo;
+package com.ornek2.demo.api.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.camunda.bpm.engine.runtime.ProcessInstance;
-import java.util.Map;
-import java.util.HashMap;
+import com.ornek2.demo.repository.AdminRepository;
+import com.ornek2.demo.model.UserRequest;
+import com.ornek2.demo.repository.UserRequestRepository;
+import com.ornek2.demo.repository.BackofficeRepository;
 import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,16 +18,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/users")
-
-
-public class UserController {
-
+public class UserController implements UserApi
+{
     @Autowired
     private UserRequestRepository userRequestRepository;
 
@@ -36,21 +35,22 @@ public class UserController {
     private RuntimeService runtimeService;
 
     @Autowired
-    private backofficeRepository backofficeTaskRepository;
-    
+    private BackofficeRepository backofficeTaskRepository;
 
 
-    @PostMapping("/admin-login")
-    public boolean loginAdmin(@RequestBody Admin admin) {
-        Admin found = adminRepository.findByUsernameAndPassword(admin.getUsername(), admin.getPassword());
-        return found != null;
+    private String generateRandomCode(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder code = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            int index = (int) (Math.random() * chars.length());
+            code.append(chars.charAt(index));
+        }
+        return code.toString();
     }
 
-    @PostMapping(value = "/register", consumes = {"multipart/form-data"})
-    public String registerUser(
-            @RequestPart("user") UserRequest userRequest,
-            @RequestPart("cv") MultipartFile cvFile
-    ) {
+
+    @Override
+    public String registerUser(UserRequest userRequest, MultipartFile cvFile) {
         try {
             long count = userRequestRepository.countByEmail(userRequest.getEmail());
             if (count >= 2) {
@@ -87,19 +87,6 @@ public class UserController {
 
             ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("BasvuruSureci", variables);
 
-            backofficeTask task = new backofficeTask();
-            task.setTaskId(UUID.randomUUID().toString());
-            task.setTaskType("Kayıt");
-            task.setName(userRequest.getName() + " " + userRequest.getSurname());
-            task.setEmail(userRequest.getEmail());
-            task.setStatus("PENDING");
-            task.setProcessInstanceId(processInstance.getProcessInstanceId());
-            task.setCreatedDate(LocalDateTime.now());
-            task.setDueDate(LocalDateTime.now().plusDays(3)); // Öylesine örnek
-            task.setWarningDate(LocalDateTime.now().plusDays(2)); // Öylesine örnek
-
-            backofficeTaskRepository.save(task);
-
             return "Başvuru alındı. Başvuru Kodunuz: " + userRequest.getApplicationCode();
         } catch (IOException e) {
             return "Dosya yüklenirken hata oluştu: " + e.getMessage();
@@ -107,24 +94,13 @@ public class UserController {
     }
 
 
-    private String generateRandomCode(int length) {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        StringBuilder bd = new StringBuilder();
-        Random rnd = new Random();
-        for (int i = 0; i < 8; i++) {
-            bd.append(chars.charAt(rnd.nextInt(chars.length())));
-        }
-        return bd.toString();
-    }
-
-    @GetMapping("/pending")
+    @Override
     public List<UserRequest> getPendingUsers() {
         return userRequestRepository.findByStatus("PENDING");
     }
 
-
-    @PostMapping("/approve")
-    public String approveUser(@RequestParam String email, @RequestParam(required = false) String note) {
+    @Override
+    public String approveUser(String email, String note) {
         UserRequest user = userRequestRepository.findFirstByEmailOrderByIdDesc(email);
         if (user != null && user.getStatus().equals("PENDING")) {
             user.setStatus("APPROVED");
@@ -135,8 +111,8 @@ public class UserController {
         return "User not found or already processed.";
     }
 
-    @PostMapping("/reject")
-    public String rejectUser(@RequestParam String email) {
+    @Override
+    public String rejectUser(String email) {
         UserRequest user = userRequestRepository.findFirstByEmailOrderByIdDesc(email);
         if (user != null && user.getStatus().equals("PENDING")) {
             user.setStatus("REJECTED");
@@ -146,18 +122,18 @@ public class UserController {
         return "User not found or already processed.";
     }
 
-    @GetMapping("/approved")
+    @Override
     public List<UserRequest> getApprovedUsers() {
         return userRequestRepository.findByStatus("APPROVED");
     }
 
-    @GetMapping("/rejected")
+    @Override
     public List<UserRequest> getRejectedUsers() {
         return userRequestRepository.findByStatus("REJECTED");
     }
-    @GetMapping("/check-status")
-    public UserRequest checkStatus(@RequestParam String code) {
+
+    @Override
+    public UserRequest checkStatus(String code) {
         return userRequestRepository.findByApplicationCode(code);
     }
-
 }

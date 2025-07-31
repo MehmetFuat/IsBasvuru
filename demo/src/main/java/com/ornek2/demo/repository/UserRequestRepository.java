@@ -1,5 +1,6 @@
-package com.ornek2.demo;
+package com.ornek2.demo.repository;
 
+import com.ornek2.demo.model.UserRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 

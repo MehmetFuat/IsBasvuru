@@ -1,4 +1,4 @@
-package com.ornek2.demo;
+package com.ornek2.demo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
