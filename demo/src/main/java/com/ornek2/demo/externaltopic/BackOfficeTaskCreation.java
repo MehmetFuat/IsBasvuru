@@ -1,4 +1,4 @@
-package com.ornek2.demo.service;
+package com.ornek2.demo.externaltopic;
 
 import com.ornek2.demo.model.BackofficeTask;
 import com.ornek2.demo.model.UserRequest;

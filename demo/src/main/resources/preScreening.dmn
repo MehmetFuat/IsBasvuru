@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:feel="https://www.omg.org/spec/DMN/20191111/FEEL/" id="Definitions_1" name="PreScreeningDefs" namespace="http://example.com/dmn" exporter="Camunda Modeler" exporterVersion="5.36.1">
+  <decision id="preScreening" name="preScreening">
+    <variable id="var_preScreening" name="preScreening" typeRef="Any" />
+    <literalExpression>
+      <text>{
+  AgeScore:
+    if age &lt; 18 then 0
+    else if age &lt;= 22 then 5
+    else if age &lt;= 30 then 10
+    else if age &lt;= 40 then 8
+    else 4,
+
+  ExperienceScore:
+    if experience &lt; 1 then 0
+    else if experience &lt; 3 then 6
+    else if experience &lt; 5 then 10
+    else if experience &lt; 8 then 12
+    else 14,
+
+  EducationScore:
+    switch(education)
+      case "Lise" then 2
+      case "Ön Lisans" then 4
+      case "Lisans" then 8
+      case "Yüksek Lisans" then 10
+      case "Doktora" then 12
+      default 0,
+
+  LanguageScore:
+    switch(languageLevel)
+      case "İngilizce" then 6
+      case "Almanca" then 5
+      case "Fransızca" then 4
+      case "İspanyolca" then 3
+      case "Diğer" then 1
+      default 0,
+
+  Total: AgeScore + ExperienceScore + EducationScore + LanguageScore,
+  MaxTotal: 42,
+  preScreenScore: Total,
+  probability: round((Total/MaxTotal) * 100, 0),
+  preScreenPassed: Total &gt;= 24
+}
+</text>
+    </literalExpression>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DMNDiagram_0czqcwk">
+      <dmndi:DMNShape id="DMNShape_0sa8mqw" dmnElementRef="preScreening">
+        <dc:Bounds height="80" width="180" x="150" y="150" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

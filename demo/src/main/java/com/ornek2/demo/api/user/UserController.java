@@ -1,12 +1,16 @@
 package com.ornek2.demo.api.user;
 
+import com.ornek2.demo.model.AppTable;
 import com.ornek2.demo.repository.AdminRepository;
 import com.ornek2.demo.model.UserRequest;
+import com.ornek2.demo.repository.AppTableRepository;
 import com.ornek2.demo.repository.UserRequestRepository;
 import com.ornek2.demo.repository.BackofficeRepository;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +41,9 @@ public class UserController implements UserApi
     @Autowired
     private BackofficeRepository backofficeTaskRepository;
 
+    @Autowired
+    private AppTableRepository appTableRepository;
+
 
     private String generateRandomCode(int length) {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -46,6 +53,24 @@ public class UserController implements UserApi
             code.append(chars.charAt(index));
         }
         return code.toString();
+    }
+    @PostMapping("/apply")
+    public String apply(@RequestBody AppTable req) {
+        AppTable app = new AppTable();
+        app.setAge(req.getAge());
+        app.setExperience(req.getExperience());
+        app.setEducation(req.getEducation());
+        app.setLanguageLevel(req.getLanguageLevel());
+        appTableRepository.save(app);
+
+        Map<String, Object> vars = new HashMap<>();
+        vars.put("age", req.getAge());
+        vars.put("experience", req.getExperience());
+        vars.put("education", req.getEducation());
+        vars.put("languageLevel", req.getLanguageLevel());
+
+        runtimeService.startProcessInstanceByKey("BasvuruSureci", vars);
+        return "Başvuru süreci başlatıldı";
     }
 
 

@@ -1,4 +1,4 @@
-package com.ornek2.demo.service;
+package com.ornek2.demo.externaltopic;
 
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
