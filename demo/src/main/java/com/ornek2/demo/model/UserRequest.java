@@ -26,7 +26,10 @@ public class UserRequest {
     private String applyDate;
     private String cvFileName;
     private String applicationCode;
-
+    private Integer age;
+    private Integer experience;
+    private String education;
+    private String languageLevel;
     
 }
 

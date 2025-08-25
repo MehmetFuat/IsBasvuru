@@ -1,7 +1,7 @@
 package com.ornek2.demo.externaltopic;
 
 import com.ornek2.demo.model.AppTable;
-import com.ornek2.demo.model.UsersTable;
+import com.ornek2.demo.model.UsersTableDeneme;
 import com.ornek2.demo.repository.AppTableRepository;
 import com.ornek2.demo.repository.UsersTableRepository;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
@@ -32,13 +32,13 @@ public class CreateUser implements ExternalTaskHandler {
             String email = task.getVariable("email");
             String phone = task.getVariable("phone");
             
-            UsersTable user = new UsersTable();
+            UsersTableDeneme user = new UsersTableDeneme();
             user.setName(name);
             user.setSurname(surname);
             user.setEmail(email);
             user.setPhone(phone);
 
-            UsersTable savedUser = usersTableRepository.save(user);
+            UsersTableDeneme savedUser = usersTableRepository.save(user);
 
             Integer age = null;
             if (task.getVariable("age") != null) {

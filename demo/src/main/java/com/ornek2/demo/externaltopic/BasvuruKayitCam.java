@@ -1,7 +1,7 @@
 package com.ornek2.demo.externaltopic;
 
 import com.ornek2.demo.model.ApplicationTable;
-import com.ornek2.demo.model.UsersTable;
+import com.ornek2.demo.model.UsersTableDeneme;
 import com.ornek2.demo.repository.ApplicationTableRepository;
 import com.ornek2.demo.repository.UsersTableRepository;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
@@ -38,7 +38,7 @@ public class BasvuruKayitCam implements ExternalTaskHandler {
                 : null;
 
         if (customerId == null) {
-            Optional<UsersTable> userOpt = usersTableRepository.findByEmail(email);
+            Optional<UsersTableDeneme> userOpt = usersTableRepository.findByEmail(email);
             if (userOpt.isPresent()) {
                 customerId = userOpt.get().getId();
             } else {

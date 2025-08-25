@@ -109,6 +109,10 @@ public class UserController implements UserApi
             variables.put("department", userRequest.getDepartment());
             variables.put("note", userRequest.getNote());
             variables.put("cvFileName", fileName);
+            variables.put("age",userRequest.getAge());
+            variables.put("experience",userRequest.getExperience());
+            variables.put("education",userRequest.getEducation());
+            variables.put("languageLevel",userRequest.getLanguageLevel());
 
             ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("BasvuruSureci", variables);
 
